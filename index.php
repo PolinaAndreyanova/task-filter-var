@@ -5,14 +5,20 @@ session_start();
 
 if (!isset($_SESSION["user"])) {
     $_SESSION["user"] = [
+        "id" => 1,
+        "ip" => $_SERVER["SERVER_ADDR"],
         "name" => "",
+        "dateOfBirth" => "",
         "phone" => "",
         "email" => "",
         "message" => ""
     ];
 
     $arUserData = [
+        "id" => 1,
+        "ip" => $_SERVER["SERVER_ADDR"],
         "name" => "",
+        "dateOfBirth" => "",
         "phone" => "",
         "email" => "",
         "message" => ""
@@ -27,6 +33,7 @@ $feedback = "";
 
 if (isset($_POST["send"])) {
     $arUserData = postDataHandler();
+    $arUserData["id"] += 1;
 
     if ($arUserData !== $_SESSION["user"]) {
         $arValidationErrors = handleValidation($arUserData);
@@ -54,9 +61,23 @@ if (isset($_POST["send"])) {
     <form class="content__form" method="post">
         <h1 class="content__header">Форма</h1>
 
+        <input class="content__input" type="text" name="id" value="<?= $arUserData["id"] ?>" readonly/>
+
+        <input class="content__input" type="text" name="ip" value="<?= $arUserData["ip"] ?>" placeholder="127.0.0.1" required />
+        <?php
+        $arIpValidationResult = handleError("ip", $arValidationErrors);
+        echo "<p class='content__feedback $arIpValidationResult[1]'>$arIpValidationResult[0]</p>";
+        ?>
+
         <input class="content__input" type="text" name="name" value="<?= $arUserData["name"] ?>" placeholder="Александр" required />
         <?php
         $arNameValidationResult = handleError("name", $arValidationErrors);
+        echo "<p class='content__feedback $arNameValidationResult[1]'>$arNameValidationResult[0]</p>";
+        ?>
+
+        <input class="content__input" type="date" name="dateOfBirth" value="<?= $arUserData["dateOfBirth"] ?>" placeholder="12.05.1985" required />
+        <?php
+        $arNameValidationResult = handleError("dateOfBirth", $arValidationErrors);
         echo "<p class='content__feedback $arNameValidationResult[1]'>$arNameValidationResult[0]</p>";
         ?>
 
