@@ -12,6 +12,12 @@ function postDataHandler(): array
     ];
 }
 
+function validateId(string $id): bool
+{
+    $intId = intval($id);
+    return ($intId <= 1000 && $intId >= 1);
+}
+
 function validateIp(string $ip): bool
 {
     return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE);
@@ -99,6 +105,12 @@ function sanitizeMessage(string $message): string
 function handleValidation(array $arUserData): array
 {
     $arValidationErrors = [];
+
+    if (!validateId($arUserData["id"])) {
+        $arValidationErrors["id"] = ["ID обращения должно быть числом в диапазоне от 1 до 1000", "content__feedback_type_error"];
+    } else {
+        $arValidationErrors["id"] = ["Валидация пройдена успешно", "content__feedback_type_success"];
+    }
 
     if (!validateIp($arUserData["ip"])) {
         $arValidationErrors["ip"] = ["IP-адрес не принадлежит допустимому диапазону: от 0.0.0.0 до 255.255.255.255.", "content__feedback_type_error"];

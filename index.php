@@ -1,31 +1,15 @@
 <?php
 include_once("functions.php");
 
-session_start();
-
-if (!isset($_SESSION["user"])) {
-    $_SESSION["user"] = [
-        "id" => 1,
-        "ip" => $_SERVER["SERVER_ADDR"],
-        "name" => "",
-        "dateOfBirth" => "",
-        "phone" => "",
-        "email" => "",
-        "message" => ""
-    ];
-
-    $arUserData = [
-        "id" => 1,
-        "ip" => $_SERVER["SERVER_ADDR"],
-        "name" => "",
-        "dateOfBirth" => "",
-        "phone" => "",
-        "email" => "",
-        "message" => ""
-    ];
-} else {
-    $arUserData = $_SESSION["user"];
-}
+$arUserData = [
+    "id" => "",
+    "ip" => $_SERVER["REMOTE_ADDR"],
+    "name" => "",
+    "dateOfBirth" => "",
+    "phone" => "",
+    "email" => "",
+    "message" => ""
+];
 
 $arValidationErrors = [];
 
@@ -33,18 +17,13 @@ $feedback = "";
 
 if (isset($_POST["send"])) {
     $arUserData = postDataHandler();
-    $arUserData["id"] += 1;
+    
+    $arValidationErrors = handleValidation($arUserData);
 
-    if ($arUserData !== $_SESSION["user"]) {
-        $arValidationErrors = handleValidation($arUserData);
-
-        if (!$arValidationErrors) {
-            $_SESSION["user"] = $arUserData;
-            $arValidationErrors = [];
-        }
-    } else {
+    if (!$arValidationErrors) {
         $arValidationErrors = [];
     }
+    
 }
 ?>
 <!DOCTYPE html>
@@ -61,7 +40,11 @@ if (isset($_POST["send"])) {
     <form class="content__form" method="post">
         <h1 class="content__header">Форма</h1>
 
-        <input class="content__input" type="text" name="id" value="<?= $arUserData["id"] ?>" readonly/>
+        <input class="content__input" type="text" name="id" value="<?= $arUserData["id"] ?>" placeholder="1 (ID обращения)" required />
+        <?php
+        $arIdValidationResult = handleError("id", $arValidationErrors);
+        echo "<p class='content__feedback $arIdValidationResult[1]'>$arIdValidationResult[0]</p>";
+        ?>
 
         <input class="content__input" type="text" name="ip" value="<?= $arUserData["ip"] ?>" placeholder="127.0.0.1" required />
         <?php
