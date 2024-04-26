@@ -13,8 +13,6 @@ $arUserData = [
 
 $arValidationErrors = [];
 
-$feedback = "";
-
 if (isset($_POST["send"])) {
     $arUserData = postDataHandler();
     
